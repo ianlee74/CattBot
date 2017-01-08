@@ -30,8 +30,11 @@ namespace CattBotCatapultControllerBGApp
 
             // Blink the safety light for a moment to indicate that its ready for control.
             TurnSafetyLightOn();
-            Task.Delay(2000);
-            TurnSafetyLightOff();
+            var t = Task.Run(async delegate {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                TurnSafetyLightOff();
+            });
+            t.Wait();            
 
             Debug.WriteLine("Ready!");
         }
@@ -54,11 +57,11 @@ namespace CattBotCatapultControllerBGApp
             _catapultControlButtonPin.ValueChanged += CatapultControlButtonPinOnValueChanged;
             // Initialize catapult up pin.
             _catapultUpPin = gpio.OpenPin(CATAPULT_UP_PIN);
-            _catapultUpPin.Write(GpioPinValue.Low);
+            _catapultUpPin.Write(GpioPinValue.High);
             _catapultUpPin.SetDriveMode(GpioPinDriveMode.Output);
             // Initialize catapult down pin.
             _catapultDownPin = gpio.OpenPin(CATAPULT_DOWN_PIN);
-            _catapultDownPin.Write(GpioPinValue.Low);
+            _catapultDownPin.Write(GpioPinValue.High);
             _catapultDownPin.SetDriveMode(GpioPinDriveMode.Output);
 
             Debug.WriteLine("GPIO initialized.");
@@ -66,12 +69,14 @@ namespace CattBotCatapultControllerBGApp
 
         private void CatapultControlButtonPinOnValueChanged(GpioPin sender, GpioPinValueChangedEventArgs args)
         {
-            if (args.Edge == GpioPinEdge.FallingEdge)
+            if (args.Edge == GpioPinEdge.RisingEdge)
             {
                 MoveCatapult(CatapultMovement.Off);
                 return;
             }
             _lastCatapultMovement = (_lastCatapultMovement == CatapultMovement.PowerDown) ? CatapultMovement.PowerUp : CatapultMovement.PowerDown;
+
+            if(_safetyLightState == GpioPinValue.Low) TurnSafetyLightOn();
             MoveCatapult(_lastCatapultMovement);
         }
 
@@ -91,8 +96,8 @@ namespace CattBotCatapultControllerBGApp
                     return;
                 default:
                     Debug.WriteLine("Stopping catapult arming.");
-                    _catapultUpPin.Write(GpioPinValue.Low);
-                    _catapultDownPin.Write(GpioPinValue.Low);
+                    _catapultUpPin.Write(GpioPinValue.High);
+                    _catapultDownPin.Write(GpioPinValue.High);
                     return;
             }
         }
