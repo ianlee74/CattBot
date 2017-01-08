@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.Devices.Gpio;
 
@@ -26,6 +27,12 @@ namespace CattBotCatapultControllerBGApp
         {
             _deferral = taskInstance.GetDeferral();
             InitGpio();
+
+            // Blink the safety light for a moment to indicate that its ready for control.
+            TurnSafetyLightOn();
+            Task.Delay(2000);
+            TurnSafetyLightOff();
+
             Debug.WriteLine("Ready!");
         }
 
@@ -88,6 +95,20 @@ namespace CattBotCatapultControllerBGApp
                     _catapultDownPin.Write(GpioPinValue.Low);
                     return;
             }
+        }
+
+        private void TurnSafetyLightOn()
+        {
+            Debug.WriteLine("Turning safety light on.");
+            _safetyLightState = GpioPinValue.High;
+            _safetyLightPin.Write(_safetyLightState);
+        }
+
+        private void TurnSafetyLightOff()
+        {
+            Debug.WriteLine("Turning safety light off.");
+            _safetyLightState = GpioPinValue.Low;
+            _safetyLightPin.Write(_safetyLightState);
         }
     }
 
