@@ -1,0 +1,20 @@
+{
+  "name": "io-thub-web-app-lab",
+  "version": "0.0.0",
+  "description": "IoTHubWebAppLab",
+  "scripts": {
+    "start": "node server"
+  },
+  "engines": {
+    "node": "~6.10.x"
+  },
+  "author": {
+    "name": "stkent"
+  },
+  "dependencies": {
+    "azure-event-hubs": "0.0.8",
+    "express": "~4.14.1",
+    "moment": "^2.17.1",
+    "ws": "^2.1.0"
+  }
+}

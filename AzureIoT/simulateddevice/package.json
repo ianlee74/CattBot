@@ -1,0 +1,16 @@
+{
+  "name": "simulateddevice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "azure-iot-device": "^1.1.14",
+    "azure-iot-device-mqtt": "^1.1.14"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
