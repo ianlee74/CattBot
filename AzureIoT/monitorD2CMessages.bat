@@ -1,0 +1,1 @@
+iothub-explorer monitor-events --login HostName=cattbot-iothub-01.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=byMed+wGV/WxOofAyHkMO8z+nOsoDQHc6BtR8FX4IvU= "cattbot"
