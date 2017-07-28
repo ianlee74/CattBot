@@ -1,20 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Devices.Gpio;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -36,22 +25,6 @@ namespace CattBotControllerApp
         private GpioPin _catapultUpPin;
         private GpioPin _catapultDownPin;
         private CatapultMovement _lastCatapultMovement = CatapultMovement.Off;
-
-        public MainPage()
-        {
-            this.InitializeComponent();
-            InitGpio();
-
-            // Blink the safety light for a moment to indicate that its ready for control.
-            TurnSafetyLightOn();
-            var t = Task.Run(async delegate {
-                await Task.Delay(TimeSpan.FromSeconds(3));
-                TurnSafetyLightOff();
-            });
-            t.Wait();
-
-            Debug.WriteLine("Ready!");
-        }
 
         private void InitGpio()
         {
@@ -80,6 +53,22 @@ namespace CattBotControllerApp
             _catapultDownPin.SetDriveMode(GpioPinDriveMode.Output);
 
             Debug.WriteLine("GPIO initialized.");
+        }
+
+        public MainPage()
+        {
+            this.InitializeComponent();
+            InitGpio();
+
+            // Blink the safety light for a moment to indicate that its ready for control.
+            TurnSafetyLightOn();
+            var t = Task.Run(async delegate {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                TurnSafetyLightOff();
+            });
+            t.Wait();
+
+            Debug.WriteLine("Ready!");
         }
 
         private void CatapultControlButtonPinOnValueChanged(GpioPin sender, GpioPinValueChangedEventArgs args)

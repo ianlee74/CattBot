@@ -4,7 +4,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>CattbotIoTHubWebApp</Name>
     <RootNamespace>IoTHubWebAppLab</RootNamespace>
-    <NameOfLastUsedPublishProfile>kstroker-hackster-01 - Web Deploy</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>cattbot-webapp-01 - Web Deploy</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -35,6 +35,7 @@
     <Compile Include="public\javascripts\index.js" />
     <Compile Include="public\javascripts\jquery-2.1.4.min.js" />
     <Compile Include="server.js" />
+    <None Include="cattbot-webapp-01 - Web Deploy.pubxml" />
     <Content Include="public\index.html" />
     <Content Include="public\stylesheets\style.css" />
     <Content Include="Web.config" />
