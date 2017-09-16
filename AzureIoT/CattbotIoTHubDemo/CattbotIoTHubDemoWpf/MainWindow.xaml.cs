@@ -155,7 +155,8 @@ namespace CattbotIoTHubDemoWpf
             if(_sendToIotHub)
             {
                 var temperatureAlert = (_temperature > 35) ? "true" : "false";
-                var msg = $"{{ deviceId: 'cattbot', mc1_temperature: {_temperature}, mc1M1Amps: {_m1Current}, mc1M2Amps: {_m2Current}, mc1M1EncoderTicksCnt: {_m1EncoderTicksCnt}, mc1M2EncoderTicksCnt: {_m2EncoderTicksCnt}, mc1MainBatteryV: {_mainVoltage}, mc1LogicBatteryV: {_logicVoltage}, temperatureAlert: {temperatureAlert}}}";
+                var timecreated = DateTime.UtcNow.ToString("s");
+                var msg = $"{{ deviceId: 'cattbot', mc1_temperature: {_temperature}, mc1M1Amps: {_m1Current}, mc1M2Amps: {_m2Current}, mc1M1EncoderTicksCnt: {_m1EncoderTicksCnt}, mc1M2EncoderTicksCnt: {_m2EncoderTicksCnt}, mc1MainBatteryV: {_mainVoltage}, mc1LogicBatteryV: {_logicVoltage}, temperatureAlert: {temperatureAlert}, timecreated: '{timecreated}'}}";
                 AzureIoTHub.SendDeviceToCloudMessageAsync(msg);
             }
 

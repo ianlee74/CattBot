@@ -8,7 +8,7 @@ $(document).ready(function () {
       {
         fill: false,
         label: 'Temperature',
-        yAxisID: 'Temperature',
+        yAxisID: 'mc1_temperature',
         borderColor: "rgba(255, 204, 0, 1)",
         pointBoarderColor: "rgba(255, 204, 0, 1)",
         backgroundColor: "rgba(255, 204, 0, 0.4)",
@@ -18,8 +18,8 @@ $(document).ready(function () {
       },
       {
         fill: false,
-        label: 'Humidity',
-        yAxisID: 'Humidity',
+        label: 'M1 Current',
+        yAxisID: 'mc1M1Amps',
         borderColor: "rgba(24, 120, 240, 1)",
         pointBoarderColor: "rgba(24, 120, 240, 1)",
         backgroundColor: "rgba(24, 120, 240, 0.4)",
@@ -33,12 +33,12 @@ $(document).ready(function () {
   var basicOption = {
     title: {
       display: true,
-      text: 'Temperature & Humidity Real-time Data',
+      text: 'CATTbot Real-time Data',
       fontSize: 36
     },
     scales: {
       yAxes: [{
-        id: 'Temperature',
+        id: 'mc1_temperature',
         type: 'linear',
         scaleLabel: {
           labelString: 'Temperature(C)',
@@ -46,10 +46,10 @@ $(document).ready(function () {
         },
         position: 'left',
       }, {
-          id: 'Humidity',
+          id: 'mc1M1Amps',
           type: 'linear',
           scaleLabel: {
-            labelString: 'Humidity(%)',
+            labelString: 'Motor 1 Current (amps)',
             display: true
           },
           position: 'right'
