@@ -23,6 +23,35 @@ namespace CattBotCatapultControllerBGApp
         private GpioPin _catapultDownPin;
         private CatapultMovement _lastCatapultMovement = CatapultMovement.Off;
 
+        private void InitGpio()
+        {
+            var gpio = GpioController.GetDefault();
+            if (gpio == null)
+            {
+                return;
+            }
+            // Initialize safety light pin.
+            _safetyLightPin = gpio.OpenPin(SAFETYLIGHT_PIN);
+            _safetyLightPin.Write(GpioPinValue.Low);
+            _safetyLightPin.SetDriveMode(GpioPinDriveMode.Output);
+            // Initialize catapult up pin.
+            _catapultUpPin = gpio.OpenPin(CATAPULT_UP_PIN);
+            _catapultUpPin.Write(GpioPinValue.High);
+            _catapultUpPin.SetDriveMode(GpioPinDriveMode.Output);
+            // Initialize catapult down pin.
+            _catapultDownPin = gpio.OpenPin(CATAPULT_DOWN_PIN);
+            _catapultDownPin.Write(GpioPinValue.High);
+            _catapultDownPin.SetDriveMode(GpioPinDriveMode.Output);
+
+            // Initialize catapult control button.
+            _catapultControlButtonPin = gpio.OpenPin(CATAPULT_CONTROL_PIN);
+            _catapultControlButtonPin.SetDriveMode(GpioPinDriveMode.Input);
+            _catapultControlButtonPin.DebounceTimeout = TimeSpan.FromMilliseconds(50);
+            _catapultControlButtonPin.ValueChanged += CatapultControlButtonPinOnValueChanged;
+
+            Debug.WriteLine("GPIO initialized.");
+        }
+
         public void Run(IBackgroundTaskInstance taskInstance)
         {
             _deferral = taskInstance.GetDeferral();
@@ -37,34 +66,6 @@ namespace CattBotCatapultControllerBGApp
             t.Wait();            
 
             Debug.WriteLine("Ready!");
-        }
-
-        private void InitGpio()
-        {
-            var gpio = GpioController.GetDefault();
-            if (gpio == null)
-            {
-                return;
-            }
-            // Initialize safety light pin.
-            _safetyLightPin = gpio.OpenPin(SAFETYLIGHT_PIN);
-            _safetyLightPin.Write(GpioPinValue.Low);
-            _safetyLightPin.SetDriveMode(GpioPinDriveMode.Output);
-            // Initialize catapult control button.
-            _catapultControlButtonPin = gpio.OpenPin(CATAPULT_CONTROL_PIN);
-            _catapultControlButtonPin.SetDriveMode(GpioPinDriveMode.Input);
-            _catapultControlButtonPin.DebounceTimeout = TimeSpan.FromMilliseconds(50);
-            _catapultControlButtonPin.ValueChanged += CatapultControlButtonPinOnValueChanged;
-            // Initialize catapult up pin.
-            _catapultUpPin = gpio.OpenPin(CATAPULT_UP_PIN);
-            _catapultUpPin.Write(GpioPinValue.High);
-            _catapultUpPin.SetDriveMode(GpioPinDriveMode.Output);
-            // Initialize catapult down pin.
-            _catapultDownPin = gpio.OpenPin(CATAPULT_DOWN_PIN);
-            _catapultDownPin.Write(GpioPinValue.High);
-            _catapultDownPin.SetDriveMode(GpioPinDriveMode.Output);
-
-            Debug.WriteLine("GPIO initialized.");
         }
 
         private void CatapultControlButtonPinOnValueChanged(GpioPin sender, GpioPinValueChangedEventArgs args)

@@ -41,8 +41,7 @@ namespace CattbotSimulator
                 var mc1M1EncoderCnt = rnd.Next(35000);
                 var mc1M2EncoderCnt = rnd.Next(35000);
                 var temperatureAlert = (mc1Temperature > 30) ? "true" : "false";
-                var timecreated = DateTime.UtcNow.ToString("s");
-                var msg = $"{{ deviceId: 'cattbot', mc1_temperature: {mc1Temperature}, mc1M1Amps: {mc1M1Amps}, mc1M2Amps: {mc1M2Amps}, mc1M1EncoderCnt: {mc1M1EncoderCnt}, mc1M2EncoderCnt: {mc1M2EncoderCnt}, mc1MainBatteryV: {mc1MainBatteryV}, mc1LogicBatteryV: {mc1LogicBatteryV}, temperatureAlert: {temperatureAlert}, timecreated: '{timecreated}'}}";
+                var msg = $"{{ deviceId: 'cattbot', timecreated: '{DateTime.UtcNow.ToString("u")}', mc1_temperature: {mc1Temperature}, mc1M1Amps: {mc1M1Amps}, mc1M2Amps: {mc1M2Amps}, mc1M1EncoderCnt: {mc1M1EncoderCnt}, mc1M2EncoderCnt: {mc1M2EncoderCnt}, mc1MainBatteryV: {mc1MainBatteryV}, mc1LogicBatteryV: {mc1LogicBatteryV}, temperatureAlert: {temperatureAlert}}}";
                 Debug.WriteLine("Sending... {0}", msg);
                 AzureIoTHub.SendDeviceToCloudMessageAsync(msg);
             };

@@ -21,13 +21,6 @@ namespace CattBotHelloWorldBGApp
         private BackgroundTaskDeferral _deferral;
         private ThreadPoolTimer _timer;
 
-        public void Run(IBackgroundTaskInstance taskInstance)
-        {
-            _deferral = taskInstance.GetDeferral();
-            InitGpio();
-            _timer = ThreadPoolTimer.CreatePeriodicTimer(Timer_Tick, TimeSpan.FromSeconds(2));
-        }
-
         private void InitGpio()
         {
             var gpio = GpioController.GetDefault();
@@ -38,6 +31,13 @@ namespace CattBotHelloWorldBGApp
             _safetyLightPin = gpio.OpenPin(SAFETYLIGHT_PIN);
             _safetyLightPin.Write(GpioPinValue.Low);
             _safetyLightPin.SetDriveMode(GpioPinDriveMode.Output);
+        }
+
+        public void Run(IBackgroundTaskInstance taskInstance)
+        {
+            _deferral = taskInstance.GetDeferral();
+            InitGpio();
+            _timer = ThreadPoolTimer.CreatePeriodicTimer(Timer_Tick, TimeSpan.FromSeconds(2));
         }
 
         private void Timer_Tick(ThreadPoolTimer timer)
