@@ -16,6 +16,8 @@
             <Button Name="btnGoForward" Margin="4" Width="100" Click="btnMoveForward_Click">Go Forward</Button>
             <Button Name="btnGoReverse" Margin="4" Width="100" Click="btnGoReverse_Click">Go Reverse</Button>
             <Button Name="btnStop" Margin="4" Width="100" Click="btnStop_Click">Stop</Button>
+            <Label>Speed:</Label>
+            <Slider Name="sldSpeedPct" Minimum="0" Maximum="100" Value="20" ValueChanged="SldSpeedPct_OnValueChanged"/>
             <CheckBox Name="chkSendToAzure" Margin="5,10,5,5" IsChecked="False" Unchecked="chkSendToAzure_Checked" Checked="chkSendToAzure_Checked">Send to Azure</CheckBox>
         </StackPanel>
         <StackPanel Orientation="Vertical" Grid.Column="2"  Margin="109,0,0,0">

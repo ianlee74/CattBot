@@ -1,24 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Timers;
 
 using RoboclawClassLib;
 
 namespace CattbotIoTHubDemoWpf
 {
+
+    public enum Direction
+    {
+        Stopped,
+        Forward,
+        Reverse
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -33,6 +29,8 @@ namespace CattbotIoTHubDemoWpf
         private bool _encoderWatch = false;
         private static readonly Timer _telemetryTimer = new Timer();
         private bool _sendToIotHub;
+        private byte _speedPct;
+        private Direction _direction;
 
         public MainWindow()
         {
@@ -43,20 +41,65 @@ namespace CattbotIoTHubDemoWpf
             _telemetryTimer.Elapsed += TimerEventProcessor;  // Timer event and handler
             _telemetryTimer.Interval = 1000; // ms
             _sendToIotHub = false;
+
+            btnStop.IsEnabled = false;
+            btnGoForward.IsEnabled = false;
+            btnGoReverse.IsEnabled = false;
+            btnConnect.IsEnabled = true;
+            btnDisconnect.IsEnabled = false;
+
+            _direction = Direction.Stopped;
+        }
+
+        private void SldSpeedPct_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            _speedPct = (byte)e.NewValue;
+            switch (_direction)
+            {
+                case Direction.Forward:
+                    MoveForward();
+                    break;
+                case Direction.Reverse:
+                    MoveReverse();
+                    break;
+            }
+        }
+
+        private void btnMoveForward_Click(object sender, RoutedEventArgs e)
+        {
+            MoveForward();
+        }
+        private void MoveForward()
+        {
+            if (!_rearRoboClaw.IsOpen()) return;
+
+            _rearRoboClaw.ST_M1Forward(_speedPct); // Start the motor going forward at power 100
+            _rearRoboClaw.ST_M2Forward(_speedPct); // Start the motor going forward at power 100
+            _telemetryTimer.Start(); // Start timer to show encoder ticks
+            btnStop.IsEnabled = true;
+            btnGoForward.IsEnabled = false;
+            btnGoReverse.IsEnabled = false;
+            btnDisconnect.IsEnabled = false;
+            _direction = Direction.Forward;
         }
 
         private void btnGoReverse_Click(object sender, RoutedEventArgs e)
         {
-            if (_rearRoboClaw.IsOpen())
-            {
-                _rearRoboClaw.ST_M1Backward(100); // Start the motor going forward at power 100
-                _rearRoboClaw.ST_M2Backward(100); // Start the motor going forward at power 100
-                _telemetryTimer.Start(); // Start timer to show encoder ticks
-                btnStop.IsEnabled = true;
-                btnGoForward.IsEnabled = false;
-                btnGoReverse.IsEnabled = false;
-                btnDisconnect.IsEnabled = false;
-            }
+            MoveReverse();
+        }
+
+        private void MoveReverse()
+        {
+            if (!_rearRoboClaw.IsOpen()) return;
+
+            _rearRoboClaw.ST_M1Backward(_speedPct); // Start the motor going forward at power 100
+            _rearRoboClaw.ST_M2Backward(_speedPct); // Start the motor going forward at power 100
+            _telemetryTimer.Start(); // Start timer to show encoder ticks
+            btnStop.IsEnabled = true;
+            btnGoForward.IsEnabled = false;
+            btnGoReverse.IsEnabled = false;
+            btnDisconnect.IsEnabled = false;
+            _direction = Direction.Reverse;
         }
 
         private void btnStop_Click(object sender, RoutedEventArgs e)
@@ -71,6 +114,7 @@ namespace CattbotIoTHubDemoWpf
                 btnGoReverse.IsEnabled = true;
                 btnDisconnect.IsEnabled = true;
                 _encoderWatch = false;
+                _direction = Direction.Stopped;
             }
         }
 
@@ -100,21 +144,6 @@ namespace CattbotIoTHubDemoWpf
         {
             _sendToIotHub = chkSendToAzure.IsChecked.Value;
         }
-
-        private void btnMoveForward_Click(object sender, RoutedEventArgs e)
-        {
-            if (_rearRoboClaw.IsOpen())
-            {
-                _rearRoboClaw.ST_M1Forward(100); // Start the motor going forward at power 100
-                _rearRoboClaw.ST_M2Forward(100); // Start the motor going forward at power 100
-                _telemetryTimer.Start(); // Start timer to show encoder ticks
-                btnStop.IsEnabled = true;
-                btnGoForward.IsEnabled = false;
-                btnGoReverse.IsEnabled = false;
-                btnDisconnect.IsEnabled = false;
-            }
-        }
-
 
         private void btnConnect_Click(object sender, RoutedEventArgs e)
         {
