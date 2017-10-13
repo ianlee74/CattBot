@@ -51,6 +51,9 @@ namespace CattbotIoTHubDemoWpf
             _direction = Direction.Stopped;
         }
 
+        private bool RightMotorIsEnabled() => (bool)chkRightMotorEnabled.IsChecked;
+        private bool LeftMotorIsEnabled() => (bool)chkLeftMotorEnabled.IsChecked;
+
         private void SldSpeedPct_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             _speedPct = (byte)e.NewValue;
@@ -73,8 +76,14 @@ namespace CattbotIoTHubDemoWpf
         {
             if (!_rearRoboClaw.IsOpen()) return;
 
-            _rearRoboClaw.ST_M1Forward(_speedPct); // Start the motor going forward at power 100
-            _rearRoboClaw.ST_M2Forward(_speedPct); // Start the motor going forward at power 100
+            if (RightMotorIsEnabled())
+            {
+                _rearRoboClaw.ST_M1Forward(_speedPct);
+            }
+            if (LeftMotorIsEnabled())
+            {
+                _rearRoboClaw.ST_M2Forward(_speedPct);
+            }
             _telemetryTimer.Start(); // Start timer to show encoder ticks
             btnStop.IsEnabled = true;
             btnGoForward.IsEnabled = false;
@@ -92,8 +101,14 @@ namespace CattbotIoTHubDemoWpf
         {
             if (!_rearRoboClaw.IsOpen()) return;
 
-            _rearRoboClaw.ST_M1Backward(_speedPct); // Start the motor going forward at power 100
-            _rearRoboClaw.ST_M2Backward(_speedPct); // Start the motor going forward at power 100
+            if (RightMotorIsEnabled())
+            {
+                _rearRoboClaw.ST_M1Backward(_speedPct);
+            }
+            if (LeftMotorIsEnabled())
+            {
+                _rearRoboClaw.ST_M2Backward(_speedPct);
+            }
             _telemetryTimer.Start(); // Start timer to show encoder ticks
             btnStop.IsEnabled = true;
             btnGoForward.IsEnabled = false;
@@ -147,7 +162,9 @@ namespace CattbotIoTHubDemoWpf
 
         private void btnConnect_Click(object sender, RoutedEventArgs e)
         {
-            if (!_rearRoboClaw.IsOpen())
+            if (_rearRoboClaw.IsOpen()) return;
+
+            try
             {
                 _rearRoboClaw.Open("AUTO", ref _roboClawModel, 128, 38400); // Open the interface to the RoboClaw
                 lblModel.Text = _roboClawModel; // Display the RoboClaw device model number
@@ -156,7 +173,21 @@ namespace CattbotIoTHubDemoWpf
                 btnGoForward.IsEnabled = true;
                 btnGoReverse.IsEnabled = true;
                 btnDisconnect.IsEnabled = true;
+                ShowError("");
             }
+            catch (InvalidOperationException ex)
+            {
+                ShowError(ex.Message + " Perhaps you left Ion Studio connected again?");
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex.Message);
+            }
+        }
+
+        private void ShowError(string errorMsg)
+        {
+            ErrorMsg.Text = errorMsg;
         }
 
         // This is the method to run when the timer is raised.
